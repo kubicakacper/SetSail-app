@@ -13,7 +13,7 @@ In the real world such an app requires a cooperation with the charter companies,
 
 It's an **ETL** app, where:
 1) Extract - webscraping using **Beautiful Soup**
-2) Transform - preaparing collected data to customer's analysis using **Pandas** and **Spark**
+2) Transform - preaparing collected data to customer's analysis using **Pandas** and **Spark 3.2**
 3) Load - transferring the data to **AWS RDS** db using **MySQL**, so it can be used in a future live repository published to WWW
 
 and all managed by **Airflow** to update the data hourly or daily
