@@ -1,8 +1,15 @@
-from scraping import FreeWave as fw
+from extract import FreeWave as fw
+from extract import Kufner as kuf
 
-# FREE-WAVE, EUROMARINE, SAILING EUROPE
+# FREE-WAVE, KUFNER
 
 if __name__ == '__main__':
 
 
-    print(fw.yachtsFreeWave())
+
+
+    print(fw.pricelistFreeWave())
+
+    print('\n\n')
+
+    print(kuf.pricelistKufner())
