@@ -1,7 +1,7 @@
 # SetSail_app
 SetSail ETL app - under consctruction
 
-Since November 2021 I am learning to be a Data Engineer.
+Since November 2021 I am learning to become a Data Engineer.
 This is gonna be the first project to my portfolio.
 
 SetSail is an application responding to a real need of creating a live repository of yachts' charter offers.
