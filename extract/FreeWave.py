@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
+# import pyarrow
 import lxml
 
 # Free-Wave has a pricelist site, where there is a pretty 2D (yachts x period) table to ingest
@@ -30,10 +31,13 @@ def yachtsFreeWave():
     soup = BeautifulSoup(url.content, 'html.parser')
     yachtSection = soup.find('section', {"class": "latest-yachts"})
     yachtList = yachtSection.find_all('div', {'class': 'list-boat-content'})
+
+    listOfDFs = []
+
     for yacht in yachtList:
         yachtTag = yacht.select("a")[0]
         yachtUrl = yachtTag['href']
-        print('\nLink to the yacht: ' + yachtUrl)
+        # print('\nLink to the yacht: ' + yachtUrl)
         yachtPage = requests.get(yachtUrl)
         yachtSoup = BeautifulSoup(yachtPage.content, 'html.parser')
 
@@ -55,8 +59,23 @@ def yachtsFreeWave():
         dict = {'key': 'Location', 'value': 'Trogir (Seget Marina Baotic)'}
         technicalDataDF = pd.concat([technicalDataDF, pd.DataFrame([dict])], ignore_index=True, axis=0)
 
-        print('\nYacht\'s specs:')
-        print(technicalDataDF)
+        dict = {'key': 'yacht URL', 'value': yachtUrl}
+        technicalDataDF = pd.concat([technicalDataDF, pd.DataFrame([dict])], ignore_index=True, axis=0)
+
+        technicalDataDF = technicalDataDF.T
+        technicalDataDF.columns = technicalDataDF.iloc[0]
+        technicalDataDF = technicalDataDF[1:]
+        listOfDFs.append(technicalDataDF)
+
+    allYachtsDF = pd.DataFrame(listOfDFs[0])
+    for df in listOfDFs[1:]:
+        allYachtsDF = pd.concat([allYachtsDF, df])
+
+    allYachtsDF = allYachtsDF.reset_index(drop=True)
+
+    # print(allYachtsDF)
+    return(allYachtsDF)
+
 
         # BELOW IS SCRAPING OF THE PRICELIST TABLE FROM THE PARTICULAR YACHT'S PAGE
 
@@ -73,6 +92,3 @@ def yachtsFreeWave():
         # print(priceListDF)
 
         # print('\nDeposit for the yacht: ' + deposit)
-
-
-yachtsFreeWave()

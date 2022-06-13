@@ -7,7 +7,6 @@ import re
 # Kufner has a pricelist site, where there is a pretty 2D (yachts x period) table to ingest
 # and a yachts site, where You need to do some webcrawling
 
-pd.set_option("display.max_rows", None, "display.max_columns", None)
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', None)
@@ -18,8 +17,8 @@ def pricelistKufner():
     pricelistKufner = "https://nautika-kufner.hr/price-list/"
     url = requests.get(pricelistKufner)
     soup = BeautifulSoup(url.content, 'html.parser')
-
-    dF_list = pd.read_html(str(soup.find('table')))[0]
+    # dF_list = pd.read_html(str(soup.find('table')).replace("<br/>","</th> <th scope=\"col\">"))[0]
+    dF_list = pd.read_html(str(soup.find('table')).replace("<br/>"," AND "))[0]
     dF = pd.DataFrame(dF_list)
     return dF
 
@@ -31,16 +30,16 @@ def yachtsKufner():
     soup = BeautifulSoup(url.content, 'html.parser')
     yachtList = soup.find_all('div', {'class': re.compile(r'col-md-4 col-sm-4 col-xs-12 col-xxs-12 stm-isotope-listing-item all')})
 
+    listOfDFs = []
+
     for yacht in yachtList:
         yachtTag = yacht.select("a")[0]
         yachtUrl = yachtTag['href']
-        print('\nLink to the yacht: ' + yachtUrl)
+        # print('\nLink to the yacht: ' + yachtUrl)
         yachtPage = requests.get(yachtUrl)
         yachtSoup = BeautifulSoup(yachtPage.content, 'html.parser')
 
         yachtDiv = yachtSoup.find('div', {'class': 'boat row'})
-
-        # print('\nYacht\'s name: ' + yachtDiv.h2.text)
 
         technicalDataDF = pd.DataFrame(columns=["key", "value"])
 
@@ -72,10 +71,46 @@ def yachtsKufner():
                     dict = {'key': keyItem, 'value': valueItem}
                     technicalDataDF = pd.concat([technicalDataDF, pd.DataFrame([dict])], ignore_index=True, axis=0)
 
-        technicalDataDF = technicalDataDF.drop_duplicates()
+        dict = {'key': 'yacht URL', 'value': yachtUrl}
+        technicalDataDF = pd.concat([technicalDataDF, pd.DataFrame([dict])], ignore_index=True, axis=0)
 
-        print('\nYacht\'s specs:')
-        print(technicalDataDF)
+        # technicalDataDF = technicalDataDF.drop_duplicates().reset_index(drop=True)
+
+        technicalDataDF = technicalDataDF.T
+        technicalDataDF.columns = technicalDataDF.iloc[0]
+        technicalDataDF = technicalDataDF[1:]
+        listOfDFs.append(technicalDataDF)
+
+
+    allYachtsDF = pd.DataFrame(listOfDFs[0])
+    for df in listOfDFs[1:]:
+        allYachtsDF = pd.concat([allYachtsDF, df])
+
+    allYachtsDF = allYachtsDF.reset_index(drop=True)
+
+    # print(allYachtsDF)
+    return allYachtsDF
+
+    # allYachtsDF = listOfDFs[0]
+    # # print(allYachtsDF)
+    # # merged_df = pd.merge(listOfDFs[0], listOfDFs[1], how='outer', on=['key'])
+    # allYachtsDF = allYachtsDF.set_index('NAME').combine_first(listOfDFs[1].set_index('NAME')).reset_index()
+    # print(allYachtsDF)
+    # print('-----')
+    # kupa = listOfDFs[2].set_index('NAME').reset_index()
+    # print(kupa)
+    # allYachtsDF = allYachtsDF.set_index('NAME').combine_first(kupa.set_index('NAME')).reset_index()
+
+    # allYachtsDF = allYachtsDF.loc[~allYachtsDF.index.duplicated(keep='first')]
+    # for df in listOfDFs[1:]:
+    #     print(df)
+    #     print('\n\n')
+    #     print(allYachtsDF)
+    #     allYachtsDF = allYachtsDF.set_index('NAME').combine_first(df.set_index('NAME')).reset_index()
+    #
+    # allYachtsDF = allYachtsDF.reset_index(drop=True)
+    #
+    # print(allYachtsDF)
 
         # BELOW IS SCRAPING OF THE PRICELIST TABLE FROM THE PARTICULAR YACHT'S PAGE
 
@@ -97,5 +132,3 @@ def yachtsKufner():
         #     priceListDF = pd.concat([priceListDF, pd.DataFrame([dict])], ignore_index=True, axis=0)
         # print('\nPricelist of the yacht this year is the following:')
         # print(priceListDF)
-
-yachtsKufner()
