@@ -12,7 +12,7 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.width', None)
 pd.set_option('display.max_colwidth', None)
 
-def pricelistFreeWave():
+def pricelist():
 
     pricelistFreeWave = "https://www.free-wave.at/preisliste/"
     url = requests.get(pricelistFreeWave)
@@ -24,7 +24,7 @@ def pricelistFreeWave():
     return dF
 
 
-def yachtsFreeWave():
+def yachts():
 
     yachtsFreeWave = "https://www.free-wave.at/yachten/"
     url = requests.get(yachtsFreeWave)

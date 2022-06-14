@@ -1,15 +1,7 @@
-from extract import FreeWave as fw
-from extract import Kufner as kuf
-
-# FREE-WAVE, KUFNER
-
 if __name__ == '__main__':
 
 
+    s1 = '12.3'
+    s2 = 'Unk'
 
-
-    print(fw.pricelistFreeWave())
-
-    print('\n\n')
-
-    print(kuf.pricelistKufner())
+    print([float(s2) if s2 != 'Unk' else float('nan')])

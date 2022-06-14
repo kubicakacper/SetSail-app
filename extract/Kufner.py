@@ -12,7 +12,7 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.width', None)
 pd.set_option('display.max_colwidth', None)
 
-def pricelistKufner():
+def pricelist():
 
     pricelistKufner = "https://nautika-kufner.hr/price-list/"
     url = requests.get(pricelistKufner)
@@ -23,7 +23,7 @@ def pricelistKufner():
     return dF
 
 
-def yachtsKufner():
+def yachts():
 
     yachtsKufner = "https://nautika-kufner.hr/fleet/"
     url = requests.get(yachtsKufner)
