@@ -20,7 +20,6 @@ def mergeData(pricelist1, pricelist2, yachts1, yachts2):
     allDataTable = mergedYachts.set_index(['name', 'charterer']).join(mergedPricelist.set_index(['name', 'charterer']), rsuffix='_p', how='outer').sort_values(by=['name', 'charterer'])
     allDataTable = allDataTable.drop(['max_pax_p', 'model_p'], axis=1)
     allDataTable.reset_index(inplace=True)
-    # print(allDataTable.columns)
 
     return allDataTable
 

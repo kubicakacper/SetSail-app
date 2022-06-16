@@ -23,7 +23,6 @@ if __name__ == '__main__':
 
 #transform 2:
     mergedData = md.mergeData(preparedPricelistFW, preparedPricelistKuf, preparedYachtsFW, preparedYachtsKuf)
-
     # schemaOfYachts = tuple(mergedData.columns.values)
     yachtsTable_listOfLists = mergedData.values  # it is a list of lists
 
@@ -36,7 +35,8 @@ if __name__ == '__main__':
             cursor.execute("USE testDB;")
             load.createYachtsTable(cursor)
             load.populateYachtsTable(cursor, yachtsTable_listOfLists)
-            load.queryYachtsTable(cursor)
+            DF = load.queryYachtTableAndReadToDataFrame(cursor)
+            print(DF)
 
     finally:
         db_conn.commit()
