@@ -17,7 +17,7 @@ def pricelist():
         name_column.append(name.rstrip('‘'))
 
     for i in range(len(model_column)):
-        rowToAdd = [model_column[i], name_column[i], int(extractedDF['Baujahr'][i+1]), \
+        rowToAdd = ['Free-Wave', model_column[i], name_column[i], int(extractedDF['Baujahr'][i+1]), \
                     c.Calc.evaluate(extractedDF['Kojen'][i+1]), \
                     1000*float(extractedDF['19.03. 09.04.'][i+1]), 1000*float(extractedDF['09.04. 30.04.'][i+1]), \
                     1000*float(extractedDF['14.05. 28.05.'][i+1]), 1000*float(extractedDF['11.06. 25.06.'][i+1]), \
@@ -44,23 +44,20 @@ def yachts():
         name_column.append(name.rstrip('‘,“”'))
 
     for i in range(len(model_column)):
-        rowToAdd = [model_column[i], name_column[i], int(extractedDF['Cabins:'][i].split('+')[0]), \
+        rowToAdd = ['Free-Wave', model_column[i], name_column[i], int(extractedDF['Cabins:'][i].split('+')[0]), \
                     c.Calc.evaluate(extractedDF['Berths:'][i]), \
                     c.Calc.evaluate(extractedDF['Toilets:'][i]), \
                     float(extractedDF['LOA = Overall length (m):'][i].replace(',','.')), \
                     float(extractedDF['Max. beam (m):'][i].replace(',','.')), \
                     float(extractedDF['Draft (m):'][i].replace(',','.')), \
                     float(extractedDF['Canvas size(m2):'][i].replace(',','.')) \
-                         if extractedDF['Canvas size(m2):'][i] != 'Unknown' else float('nan'), \
+                         if extractedDF['Canvas size(m2):'][i] != 'Unknown' else float(-1), \
                     extractedDF['Engine:'][i], \
                     int(extractedDF['Water tank (l):'][i]), \
                     int(extractedDF['Fuel tank (l):'][i]), \
                     extractedDF['Location'][i], \
-                    extractedDF['yacht URL'][i], \
-                    ]
+                    extractedDF['yacht URL'][i] \
+                    ]  # regarding "float(-1)": I would use NaN, but MyQSL does not support it
         transformedDF.loc[i] = rowToAdd
 
     return transformedDF
-
-
-print(pricelist())

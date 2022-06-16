@@ -1,9 +1,6 @@
 import pandas as pd
 from extract import Kufner as kuf
-import pandas as pd
 from transform import Calc as c
-
-from extract import Kufner as kuf
 from transform import schemas
 
 
@@ -14,8 +11,8 @@ def pricelist():
     transformedDF = pd.DataFrame(columns=schemas.PRICELIST_SCHEMA)
 
     for i in range(extractedDF.shape[0]):
-        rowToAdd = [extractedDF['MODEL'][i], extractedDF['NAME'][i], int(extractedDF['BUILT YEAR'][i]), \
-                    extractedDF['MAX PERSONS'][i], \
+        rowToAdd = ['Kufner', extractedDF['MODEL'][i], extractedDF['NAME'][i], \
+                    int(extractedDF['BUILT YEAR'][i]), extractedDF['MAX PERSONS'][i], \
                     float(extractedDF['1.1.- 27.4. AND 5.10. - 31.12.'][i].lstrip('€')), \
                     float(extractedDF['1.1.- 27.4. AND 5.10. - 31.12.'][i].lstrip('€')), \
                     float(extractedDF['27.4. - 25.5. AND 28.9. - 5.10.'][i].lstrip('€')), \
@@ -47,19 +44,17 @@ def yachts():
         else:
             listOfColumnNames.add(item)
     extractedDF.columns = temp
-    print(extractedDF)
 
     for i in range(extractedDF.shape[0]):
-        rowToAdd = [extractedDF['MODEL'][i], \
-                    extractedDF['NAME'][i], \
+        rowToAdd = ['Kufner', extractedDF['MODEL'][i], extractedDF['NAME'][i], \
                     int(extractedDF['CABINS'][i].split('+')[0]), \
                     c.Calc.evaluate(extractedDF['BERTHS_2'][i]), \
                     c.Calc.evaluate(extractedDF['TOILETS/SHOWERS'][i]), \
                     float(extractedDF['LOA'][i].replace(',','.').rstrip('m ')), \
                     float(extractedDF['MAX BEAM'][i].replace(',','.').rstrip('m ')), \
                     float(extractedDF['DRAFT'][i].replace(',','.').rstrip('m ')), \
-                    float(extractedDF['MAIN SAIL'][i].split(' ')[0].rstrip('m2')
-                          +extractedDF['GENOVA SAIL'][i].split(' ')[0].rstrip('m2')), \
+                    float(extractedDF['MAIN SAIL'][i].split(' ')[0].rstrip('m2'))
+                          +float(extractedDF['GENOVA SAIL'][i].split(' ')[0].rstrip('m2')), \
                     extractedDF['ENGINE'][i], \
                     int(extractedDF['WATER CAPACITY(lt)'][i].rstrip('l ')), \
                     int(extractedDF['FUEL CAPACITY(lt)'][i].rstrip('l ')), \
@@ -69,6 +64,3 @@ def yachts():
         transformedDF.loc[i] = rowToAdd
 
     return transformedDF
-
-
-print(pricelist())

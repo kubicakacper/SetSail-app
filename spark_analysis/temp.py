@@ -46,7 +46,7 @@ schema = StructType([ \
     StructField(schemas.PRICELIST_SCHEMA[1], StringType(), True), \
     StructField(schemas.PRICELIST_SCHEMA[2], StringType(), True), \
     StructField(schemas.PRICELIST_SCHEMA[3], StringType(), True), \
-    StructField("march", FloatType(), True), \
+    StructField(schemas.PRICELIST_SCHEMA[4], FloatType(), True), \
     StructField("april", FloatType(), True), \
     StructField("may", FloatType(), True), \
     StructField("june", FloatType(), True), \
