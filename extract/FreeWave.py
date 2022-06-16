@@ -14,6 +14,8 @@ pd.set_option('display.max_colwidth', None)
 
 def pricelist():
 
+    print(f'I am in efw.pricelist\n')
+
     pricelistFreeWave = "https://www.free-wave.at/preisliste/"
     url = requests.get(pricelistFreeWave)
     soup = BeautifulSoup(url.content, 'html.parser')
@@ -25,6 +27,8 @@ def pricelist():
 
 
 def yachts():
+
+    print(f'I am in efw.yachts\n')
 
     yachtsFreeWave = "https://www.free-wave.at/yachten/"
     url = requests.get(yachtsFreeWave)

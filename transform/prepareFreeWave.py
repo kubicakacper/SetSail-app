@@ -3,9 +3,11 @@ import pandas as pd
 from extract import FreeWave as fw
 from transform import schemas
 
-def pricelist():
+def pricelist(extractedDF):
 
-    extractedDF = fw.pricelist()
+    print(f'I am in pfw.pricelist\n')
+
+    # extractedDF = fw.pricelist()
 
     transformedDF = pd.DataFrame(columns=schemas.PRICELIST_SCHEMA)
     model_column = []
@@ -29,9 +31,11 @@ def pricelist():
     return transformedDF
 
 
-def yachts():
+def yachts(extractedDF):
 
-    extractedDF = fw.yachts()
+    print(f'I am in pfw.yachts\n')
+
+    # extractedDF = fw.yachts()
 
     transformedDF = pd.DataFrame(columns=schemas.YACHTS_SCHEMA)
 

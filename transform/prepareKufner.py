@@ -4,9 +4,11 @@ from transform import Calc as c
 from transform import schemas
 
 
-def pricelist():
+def pricelist(extractedDF):
 
-    extractedDF = kuf.pricelist()
+    print(f'I am in pk.pricelist\n')
+
+    # extractedDF = kuf.pricelist()
 
     transformedDF = pd.DataFrame(columns=schemas.PRICELIST_SCHEMA)
 
@@ -27,9 +29,11 @@ def pricelist():
     return transformedDF
 
 
-def yachts():
+def yachts(extractedDF):
 
-    extractedDF = kuf.yachts()
+    print(f'I am in pk.yachts\n')
+
+    # extractedDF = kuf.yachts()
 
     transformedDF = pd.DataFrame(columns=schemas.YACHTS_SCHEMA)
 
