@@ -24,6 +24,9 @@ try:
             .filter(yachtsDF.cabins >= 4)\
             .filter(yachtsDF.year_of_built >= 2015)\
             .filter(yachtsDF.september <= 4000)\
+            .sort(yachtsDF.september)\
+            .select("model","cabins", "max_pax", "location", "year_of_built", "september")\
+            .withColumnRenamed( "september", "price")\
             .show(truncate=False)
 
 finally:
