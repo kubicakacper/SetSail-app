@@ -7,8 +7,6 @@ def pricelist(extractedDF):
 
     print(f'I am in pfw.pricelist\n')
 
-    # extractedDF = fw.pricelist()
-
     transformedDF = pd.DataFrame(columns=schemas.PRICELIST_SCHEMA)
     model_column = []
     name_column = []

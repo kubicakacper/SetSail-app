@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
-# import pyarrow
 import lxml
 
 # Free-Wave has a pricelist site, where there is a pretty 2D (yachts x period) table to ingest
@@ -41,11 +40,8 @@ def yachts():
     for yacht in yachtList:
         yachtTag = yacht.select("a")[0]
         yachtUrl = yachtTag['href']
-        # print('\nLink to the yacht: ' + yachtUrl)
         yachtPage = requests.get(yachtUrl)
         yachtSoup = BeautifulSoup(yachtPage.content, 'html.parser')
-
-        # print('\nYacht\'s name: ' + yachtSoup.find('h1').text.split(sep='\n')[1].strip())
 
         technicalDataDF = pd.DataFrame(columns=["key", "value"])
 
@@ -77,7 +73,6 @@ def yachts():
 
     allYachtsDF = allYachtsDF.reset_index(drop=True)
 
-    # print(allYachtsDF)
     return(allYachtsDF)
 
 

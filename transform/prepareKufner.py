@@ -1,5 +1,4 @@
 import pandas as pd
-from extract import Kufner as kuf
 from transform import Calc as c
 from transform import schemas
 
@@ -7,8 +6,6 @@ from transform import schemas
 def pricelist(extractedDF):
 
     print(f'I am in pk.pricelist\n')
-
-    # extractedDF = kuf.pricelist()
 
     transformedDF = pd.DataFrame(columns=schemas.PRICELIST_SCHEMA)
 
@@ -33,8 +30,6 @@ def yachts(extractedDF):
 
     print(f'I am in pk.yachts\n')
 
-    # extractedDF = kuf.yachts()
-
     transformedDF = pd.DataFrame(columns=schemas.YACHTS_SCHEMA)
 
     # DEALING WITH DUPLICATE COLUMNS
@@ -44,7 +39,6 @@ def yachts(extractedDF):
         item = extractedDF.columns[j]
         if item in listOfColumnNames:
             temp[j] = str(item + '_2')
-            # extractedDF = extractedDF.rename(columns={item : str(item + '_' + str(j))})
         else:
             listOfColumnNames.add(item)
     extractedDF.columns = temp

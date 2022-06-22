@@ -24,7 +24,6 @@ def pricelist():
     dF = pd.DataFrame(dF_list)
     return dF
 
-
 def yachts():
 
     print(f'I am in ek.yachts\n')
@@ -39,7 +38,6 @@ def yachts():
     for yacht in yachtList:
         yachtTag = yacht.select("a")[0]
         yachtUrl = yachtTag['href']
-        # print('\nLink to the yacht: ' + yachtUrl)
         yachtPage = requests.get(yachtUrl)
         yachtSoup = BeautifulSoup(yachtPage.content, 'html.parser')
 
@@ -51,7 +49,6 @@ def yachts():
         # I am using pandas.concat instead.
         dict = {'key': 'NAME', 'value': yachtDiv.h2.text.strip()}
         technicalDataDF = pd.concat([technicalDataDF, pd.DataFrame([dict])], ignore_index=True, axis=0)
-
 
         technicalDataItems = yachtSoup.find('div', {'class': 'boat-data row'}).find_all('div', {'class': 't-row'})
         for item in technicalDataItems[0:-1]:
@@ -77,9 +74,7 @@ def yachts():
 
         dict = {'key': 'yacht URL', 'value': yachtUrl}
         technicalDataDF = pd.concat([technicalDataDF, pd.DataFrame([dict])], ignore_index=True, axis=0)
-
         # technicalDataDF = technicalDataDF.drop_duplicates().reset_index(drop=True)
-
         technicalDataDF = technicalDataDF.T
         technicalDataDF.columns = technicalDataDF.iloc[0]
         technicalDataDF = technicalDataDF[1:]
@@ -92,29 +87,7 @@ def yachts():
 
     allYachtsDF = allYachtsDF.reset_index(drop=True)
 
-    # print(allYachtsDF)
     return allYachtsDF
-
-    # allYachtsDF = listOfDFs[0]
-    # # print(allYachtsDF)
-    # # merged_df = pd.merge(listOfDFs[0], listOfDFs[1], how='outer', on=['key'])
-    # allYachtsDF = allYachtsDF.set_index('NAME').combine_first(listOfDFs[1].set_index('NAME')).reset_index()
-    # print(allYachtsDF)
-    # print('-----')
-    # kupa = listOfDFs[2].set_index('NAME').reset_index()
-    # print(kupa)
-    # allYachtsDF = allYachtsDF.set_index('NAME').combine_first(kupa.set_index('NAME')).reset_index()
-
-    # allYachtsDF = allYachtsDF.loc[~allYachtsDF.index.duplicated(keep='first')]
-    # for df in listOfDFs[1:]:
-    #     print(df)
-    #     print('\n\n')
-    #     print(allYachtsDF)
-    #     allYachtsDF = allYachtsDF.set_index('NAME').combine_first(df.set_index('NAME')).reset_index()
-    #
-    # allYachtsDF = allYachtsDF.reset_index(drop=True)
-    #
-    # print(allYachtsDF)
 
         # BELOW IS SCRAPING OF THE PRICELIST TABLE FROM THE PARTICULAR YACHT'S PAGE
 
