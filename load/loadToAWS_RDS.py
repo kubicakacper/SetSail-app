@@ -1,11 +1,11 @@
 import pandas as pd
 
-def createYachtsDB(cursor):
+
+def create_yachts_db(cursor):
     cursor.execute("CREATE DATABASE yachtsDB;")
 
-# name,charterer,model,cabins,max_pax,toilets,length,beam,draft,sail_area,engine,water_tank,fuel_tank,location,URL,year_of_built,march,april,may,june,july,august,september,october,november
 
-def createYachtsTable(cursor):
+def create_yachts_table(cursor):
     sql = '''drop table if exists Yachts;'''
     cursor.execute(sql)
     sql = '''CREATE TABLE Yachts( \
@@ -38,26 +38,26 @@ def createYachtsTable(cursor):
     cursor.execute(sql)
 
 
-def populateYachtsTable(cursor, yachtsTable_listOfLists):
-    for rowAsList in yachtsTable_listOfLists:
+def populate_yachts_table(cursor, yachts_table_list_of_lists):
+    for rowAsList in yachts_table_list_of_lists:
         # remove NaNs, cause MySQL doesn't accept it:
         for i, cell in enumerate(rowAsList):
             if pd.isna(cell):
                 rowAsList[i] = float(-1)
-        rowTuple = list(rowAsList)
+        row_tuple = list(rowAsList)
         sql = '''insert into Yachts values( \
         %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s \
         )'''
-        cursor.execute(sql, rowTuple) # row should be a tuple of 25 elements
+        cursor.execute(sql, row_tuple)  # row should be a tuple of 25 elements
 
-def truncateYachtsTable(cursor):
+
+def truncate_yachts_table(cursor):
     sql = '''
     truncate table Yachts;
     '''
     cursor.execute(sql)
 
-def dropYachtsTable(cursor):
+
+def drop_yachts_table(cursor):
     sql = '''drop table if exists Yachts;'''
     cursor.execute(sql)
-
-

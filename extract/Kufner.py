@@ -1,111 +1,88 @@
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
-import lxml
 import re
 
-# Kufner has a pricelist site, where there is a pretty 2D (yachts x period) table to ingest
-# and a yachts site, where You need to do some webcrawling
+# Kufner has a price-list site, where there is a pretty 2D (yachts x period) table to ingest
+# and a yachts site, where You need to do some web-crawling
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', None)
 pd.set_option('display.max_colwidth', None)
 
+
 def pricelist():
 
     print(f'I am in ek.pricelist\n')
 
-    pricelistKufner = "https://nautika-kufner.hr/price-list/"
-    url = requests.get(pricelistKufner)
+    pricelist_kufner = "https://nautika-kufner.hr/price-list/"
+    url = requests.get(pricelist_kufner)
     soup = BeautifulSoup(url.content, 'html.parser')
-    # dF_list = pd.read_html(str(soup.find('table')).replace("<br/>","</th> <th scope=\"col\">"))[0]
-    dF_list = pd.read_html(str(soup.find('table')).replace("<br/>"," AND "))[0]
-    dF = pd.DataFrame(dF_list)
-    return dF
+    df_list = pd.read_html(str(soup.find('table')).replace("<br/>", " AND "))[0]
+    return pd.DataFrame(df_list)
+
 
 def yachts():
 
     print(f'I am in ek.yachts\n')
 
-    yachtsKufner = "https://nautika-kufner.hr/fleet/"
-    url = requests.get(yachtsKufner)
+    yachts_kufner = "https://nautika-kufner.hr/fleet/"
+    url = requests.get(yachts_kufner)
     soup = BeautifulSoup(url.content, 'html.parser')
-    yachtList = soup.find_all('div', {'class': re.compile(r'col-md-4 col-sm-4 col-xs-12 col-xxs-12 stm-isotope-listing-item all')})
+    yacht_list = soup.find_all('div', {'class': re.compile(
+        r'col-mD-4 col-sm-4 col-xs-12 col-xxs-12 stm-isotope-listing-item all')})
 
-    listOfDFs = []
+    list_of_dfs = []
 
-    for yacht in yachtList:
-        yachtTag = yacht.select("a")[0]
-        yachtUrl = yachtTag['href']
-        yachtPage = requests.get(yachtUrl)
-        yachtSoup = BeautifulSoup(yachtPage.content, 'html.parser')
+    for yacht in yacht_list:
+        yacht_tag = yacht.select("a")[0]
+        yacht_url = yacht_tag['href']
+        yacht_page = requests.get(yacht_url)
+        yacht_soup = BeautifulSoup(yacht_page.content, 'html.parser')
 
-        yachtDiv = yachtSoup.find('div', {'class': 'boat row'})
+        yacht_div = yacht_soup.find('div', {'class': 'boat row'})
 
-        technicalDataDF = pd.DataFrame(columns=["key", "value"])
+        technical_data_df = pd.DataFrame(columns=["key", "value"])
 
-        # Beacause the frame.append method is deprecated and will be removed from pandas in a future version,
+        # Because the frame.append method is deprecated and will be removed from pandas in a future version,
         # I am using pandas.concat instead.
-        dict = {'key': 'NAME', 'value': yachtDiv.h2.text.strip()}
-        technicalDataDF = pd.concat([technicalDataDF, pd.DataFrame([dict])], ignore_index=True, axis=0)
+        yacht_as_dict = {'key': 'NAME', 'value': yacht_div.h2.text.strip()}
+        technical_data_df = pd.concat([technical_data_df, pd.DataFrame([yacht_as_dict])], ignore_index=True, axis=0)
 
-        technicalDataItems = yachtSoup.find('div', {'class': 'boat-data row'}).find_all('div', {'class': 't-row'})
-        for item in technicalDataItems[0:-1]:
-            keyDiv = item.find_next('div', {'class': 't-label'})
-            if(keyDiv != None):
-                keyItem = keyDiv.text.strip()
-                valueItem = item.find_next('div', {'class': 't-value h6'}).text.strip()
-        #     if (item.span.contents == []):
-        #         item.span.contents = ['Unknown']
-            dict = {'key': keyItem, 'value': valueItem}
-            technicalDataDF = pd.concat([technicalDataDF, pd.DataFrame([dict])], ignore_index=True, axis=0)
+        technical_data_items = yacht_soup.find('div', {'class': 'boat-data row'}).find_all('div', {'class': 't-row'})
+        for item in technical_data_items[0:-1]:
+            key_div = item.find_next('div', {'class': 't-label'})
+            if key_div is not None:
+                key_item = key_div.text.strip()
+                value_item = item.find_next('div', {'class': 't-value h6'}).text.strip()
+                yacht_as_dict = {'key': key_item, 'value': value_item}
+                technical_data_df = pd.concat([technical_data_df, pd.DataFrame([yacht_as_dict])], ignore_index=True,
+                                              axis=0)
 
-        technicalDataItems_2 = yachtSoup.find_all('div', {'class': 'top-table'})
-        for table in technicalDataItems_2:
+        technical_data_items_2 = yacht_soup.find_all('div', {'class': 'top-table'})
+        for table in technical_data_items_2:
             rows = table.find_all('tr')
             for item in rows:
-                keyDiv = item.find('span', {'class': 'text-left'})
-                if(keyDiv != None):
-                    keyItem = keyDiv.text.strip()
-                    valueItem = item.find('span', {'class': 'text-right'}).text.strip()
-                    dict = {'key': keyItem, 'value': valueItem}
-                    technicalDataDF = pd.concat([technicalDataDF, pd.DataFrame([dict])], ignore_index=True, axis=0)
+                key_div = item.find('span', {'class': 'text-left'})
+                if key_div is not None:
+                    key_item = key_div.text.strip()
+                    value_item = item.find('span', {'class': 'text-right'}).text.strip()
+                    yacht_as_dict = {'key': key_item, 'value': value_item}
+                    technical_data_df = pd.concat([technical_data_df, pd.DataFrame([yacht_as_dict])],
+                                                  ignore_index=True, axis=0)
 
-        dict = {'key': 'yacht URL', 'value': yachtUrl}
-        technicalDataDF = pd.concat([technicalDataDF, pd.DataFrame([dict])], ignore_index=True, axis=0)
-        # technicalDataDF = technicalDataDF.drop_duplicates().reset_index(drop=True)
-        technicalDataDF = technicalDataDF.T
-        technicalDataDF.columns = technicalDataDF.iloc[0]
-        technicalDataDF = technicalDataDF[1:]
-        listOfDFs.append(technicalDataDF)
+        yacht_as_dict = {'key': 'yacht URL', 'value': yacht_url}
+        technical_data_df = pd.concat([technical_data_df, pd.DataFrame([yacht_as_dict])], ignore_index=True, axis=0)
+        technical_data_df = technical_data_df.T
+        technical_data_df.columns = technical_data_df.iloc[0]
+        technical_data_df = technical_data_df[1:]
+        list_of_dfs.append(technical_data_df)
 
+    all_yachts_df = pd.DataFrame(list_of_dfs[0])
+    for df in list_of_dfs[1:]:
+        all_yachts_df = pd.concat([all_yachts_df, df])
 
-    allYachtsDF = pd.DataFrame(listOfDFs[0])
-    for df in listOfDFs[1:]:
-        allYachtsDF = pd.concat([allYachtsDF, df])
+    all_yachts_df = all_yachts_df.reset_index(drop=True)
 
-    allYachtsDF = allYachtsDF.reset_index(drop=True)
-
-    return allYachtsDF
-
-        # BELOW IS SCRAPING OF THE PRICELIST TABLE FROM THE PARTICULAR YACHT'S PAGE
-
-        # priceListDF = pd.DataFrame(columns=['period', 'price'])
-        # priceListRows = yachtSoup.find('table', {'class': 'table pricelist'}).find_all('tr')
-        #
-        # keyItems = priceListRows[0].find_all('th')
-        # keys = []
-        # for item in keyItems[0:-1]:
-        #     keys.append(item.text.strip())
-        #
-        # valueItems = priceListRows[1].find_all('td')
-        # values = []
-        # for item in valueItems[0:-1]:
-        #     values.append(item.text.strip())
-        #
-        # for i in range(len(keys)):
-        #     dict = {'period': keys[i], 'price': values[i]}
-        #     priceListDF = pd.concat([priceListDF, pd.DataFrame([dict])], ignore_index=True, axis=0)
-        # print('\nPricelist of the yacht this year is the following:')
-        # print(priceListDF)
+    return all_yachts_df

@@ -1,46 +1,44 @@
 import pymysql
 
 from query import readFromAWS_RDS as readRDS
-from extract import FreeWave as efw, Kufner as ek
-from transform import prepareFreeWave as pfw, prepareKufner as pk, mergeData as md
-from load import loadToAWS_RDS as load
-from load import connCredentials as cc
+from extract import FreeWave as eFW, Kufner as eK
+from transform import prepareFreeWave as pFW, prepareKufner as pK, mergeData as mD
+from load import loadToAWS_RDS
+from load import connCredentials as cC
 
 
 # extract:
-importedYachtsFW = efw.yachts()
-importedYachtsKuf = ek.yachts()
-importedPricelistFW = efw.pricelist()
-importedPricelistKuf = ek.pricelist()
+importedYachtsFW = eFW.yachts()
+importedYachtsKuf = eK.yachts()
+imported_pricelist_fw = eFW.pricelist()
+imported_pricelist_kuf = eK.pricelist()
 
 # transform 1:
-preparedYachtsFW = pfw.yachts(importedYachtsFW)
-preparedYachtsKuf = pk.yachts(importedYachtsKuf)
-preparedPricelistFW = pfw.pricelist(importedPricelistFW)
-preparedPricelistKuf = pk.pricelist(importedPricelistKuf)
+preparedYachtsFW = pFW.yachts(importedYachtsFW)
+preparedYachtsKuf = pK.yachts(importedYachtsKuf)
+preparedPricelistFW = pFW.pricelist(imported_pricelist_fw)
+preparedPricelistKuf = pK.pricelist(imported_pricelist_kuf)
 
 # transform 2:
-mergedData = md.mergeData(preparedPricelistFW, preparedPricelistKuf, preparedYachtsFW, preparedYachtsKuf)
-# schemaOfYachts = tuple(mergedData.columns.values)
-# yachtsTable_listOfLists = mergedData.values  # it is a list of lists
+mergedData = mD.merge_data(preparedPricelistFW, preparedPricelistKuf, preparedYachtsFW, preparedYachtsKuf)
 
 # query
-db_conn = pymysql.connect(host=cc.ENDPOINT, user=cc.MASTER_USERNAME, password=cc.PASSWORD)
+db_conn = pymysql.connect(host=cC.ENDPOINT, user=cC.MASTER_USERNAME, password=cC.PASSWORD)
 
 try:
     with db_conn.cursor() as cursor:
 
         cursor.execute("USE testDB;")
 
-        dfFromRDS = readRDS.queryYachtTableAndReadToDataFrame(cursor)
-        differenceDF = dfFromRDS.compare(mergedData)
-        if not(differenceDF.empty):
-# load
-            load.truncateYachtsTable(cursor)
-            load.populateYachtsTable(cursor, mergedData.values)
+        df_from_rds = readRDS.query_yacht_table_and_read_to_data_frame(cursor)
+        difference_df = df_from_rds.compare(mergedData)
+        # load
+        if not difference_df.empty:
+            loadToAWS_RDS.truncate_yachts_table(cursor)
+            loadToAWS_RDS.populate_yachts_table(cursor, mergedData.values)
 
-# test
-        print(readRDS.queryYachtTableAndReadToDataFrame(cursor))
+        # test
+        print(readRDS.query_yacht_table_and_read_to_data_frame(cursor))
 
 finally:
     db_conn.commit()

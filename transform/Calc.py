@@ -10,6 +10,7 @@ _OP_MAP = {
     ast.Invert: operator.neg,
 }
 
+
 class Calc(ast.NodeVisitor):
 
     def visit_BinOp(self, node):

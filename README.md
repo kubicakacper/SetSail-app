@@ -26,7 +26,7 @@ ___
 
 It's structure is the following.
 In _**runnable**_ directory, there are:
-- _pipeliny.py_, which is a main function for the ETL
+- _pipeline.py_, which is a main function for the ETL
 - _search_engine.py_ with a sample Spark search query
 
 _**extract**_ directory consists of 2 scripts with data webscraping (one script for one website) and a simple script for csv reading.

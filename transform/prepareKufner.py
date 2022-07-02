@@ -1,64 +1,62 @@
 import pandas as pd
-from transform import Calc as c
+from transform import Calc
 from transform import schemas
 
 
-def pricelist(extractedDF):
-
+def pricelist(extracted_df):
     print(f'I am in pk.pricelist\n')
 
-    transformedDF = pd.DataFrame(columns=schemas.PRICELIST_SCHEMA)
+    transformed_df = pd.DataFrame(columns=schemas.PRICELIST_SCHEMA)
 
-    for i in range(extractedDF.shape[0]):
-        rowToAdd = ['Kufner', extractedDF['MODEL'][i], extractedDF['NAME'][i], \
-                    int(extractedDF['BUILT YEAR'][i]), extractedDF['MAX PERSONS'][i], \
-                    float(extractedDF['1.1.- 27.4. AND 5.10. - 31.12.'][i].lstrip('€')), \
-                    float(extractedDF['1.1.- 27.4. AND 5.10. - 31.12.'][i].lstrip('€')), \
-                    float(extractedDF['27.4. - 25.5. AND 28.9. - 5.10.'][i].lstrip('€')), \
-                    float(extractedDF['8.6. - 22.6. AND 14.9. - 21.9.'][i].lstrip('€')), \
-                    float(extractedDF['29.6. -27.7. AND 17.8. - 31.8.'][i].lstrip('€')), \
-                    float(extractedDF['27.7. - 17.8.'][i].lstrip('€')), \
-                    float(extractedDF['22.6. -29.6. AND 31.8. - 14.9.'][i].lstrip('€')), \
-                    float(extractedDF['1.1.- 27.4. AND 5.10. - 31.12.'][i].lstrip('€')), \
-                    float(extractedDF['1.1.- 27.4. AND 5.10. - 31.12.'][i].lstrip('€'))]
-        transformedDF.loc[i] = rowToAdd
+    for i in range(extracted_df.shape[0]):
+        row_to_add = ['Kufner', extracted_df['MODEL'][i], extracted_df['NAME'][i],
+                      int(extracted_df['BUILT YEAR'][i]), extracted_df['MAX PERSONS'][i],
+                      float(extracted_df['1.1.- 27.4. AND 5.10. - 31.12.'][i].lstrip('€')),
+                      float(extracted_df['1.1.- 27.4. AND 5.10. - 31.12.'][i].lstrip('€')),
+                      float(extracted_df['27.4. - 25.5. AND 28.9. - 5.10.'][i].lstrip('€')),
+                      float(extracted_df['8.6. - 22.6. AND 14.9. - 21.9.'][i].lstrip('€')),
+                      float(extracted_df['29.6. -27.7. AND 17.8. - 31.8.'][i].lstrip('€')),
+                      float(extracted_df['27.7. - 17.8.'][i].lstrip('€')),
+                      float(extracted_df['22.6. -29.6. AND 31.8. - 14.9.'][i].lstrip('€')),
+                      float(extracted_df['1.1.- 27.4. AND 5.10. - 31.12.'][i].lstrip('€')),
+                      float(extracted_df['1.1.- 27.4. AND 5.10. - 31.12.'][i].lstrip('€'))]
+        transformed_df.loc[i] = row_to_add
 
-    return transformedDF
+    return transformed_df
 
 
-def yachts(extractedDF):
-
+def yachts(extracted_df):
     print(f'I am in pk.yachts\n')
 
-    transformedDF = pd.DataFrame(columns=schemas.YACHTS_SCHEMA)
+    transformed_df = pd.DataFrame(columns=schemas.YACHTS_SCHEMA)
 
-    # DEALING WITH DUPLICATE COLUMNS
-    temp = list(extractedDF.columns)
-    listOfColumnNames = set()
-    for j in range(len(extractedDF.columns)):
-        item = extractedDF.columns[j]
-        if item in listOfColumnNames:
+    # dealing with duplicates columns:
+    temp = list(extracted_df.columns)
+    list_of_column_names = set()
+    for j in range(len(extracted_df.columns)):
+        item = extracted_df.columns[j]
+        if item in list_of_column_names:
             temp[j] = str(item + '_2')
         else:
-            listOfColumnNames.add(item)
-    extractedDF.columns = temp
+            list_of_column_names.add(item)
+    extracted_df.columns = temp
 
-    for i in range(extractedDF.shape[0]):
-        rowToAdd = ['Kufner', extractedDF['MODEL'][i], extractedDF['NAME'][i], \
-                    int(extractedDF['CABINS'][i].split('+')[0]), \
-                    c.Calc.evaluate(extractedDF['BERTHS_2'][i]), \
-                    c.Calc.evaluate(extractedDF['TOILETS/SHOWERS'][i]), \
-                    float(extractedDF['LOA'][i].replace(',','.').rstrip('m ')), \
-                    float(extractedDF['MAX BEAM'][i].replace(',','.').rstrip('m ')), \
-                    float(extractedDF['DRAFT'][i].replace(',','.').rstrip('m ')), \
-                    float(extractedDF['MAIN SAIL'][i].split(' ')[0].rstrip('m2'))
-                          +float(extractedDF['GENOVA SAIL'][i].split(' ')[0].rstrip('m2')), \
-                    extractedDF['ENGINE'][i], \
-                    int(extractedDF['WATER CAPACITY(lt)'][i].rstrip('l ')), \
-                    int(extractedDF['FUEL CAPACITY(lt)'][i].rstrip('l ')), \
-                    extractedDF['LOCATION'][i], \
-                    extractedDF['yacht URL'][i], \
-                    ]
-        transformedDF.loc[i] = rowToAdd
+    for i in range(extracted_df.shape[0]):
+        row_to_add = ['Kufner', extracted_df['MODEL'][i], extracted_df['NAME'][i],
+                      int(extracted_df['CABINS'][i].split('+')[0]),
+                      Calc.Calc.evaluate(extracted_df['BERTHS_2'][i]),
+                      Calc.Calc.evaluate(extracted_df['TOILETS/SHOWERS'][i]),
+                      float(extracted_df['LOA'][i].replace(',', '.').rstrip('m ')),
+                      float(extracted_df['MAX BEAM'][i].replace(',', '.').rstrip('m ')),
+                      float(extracted_df['DRAFT'][i].replace(',', '.').rstrip('m ')),
+                      float(extracted_df['MAIN SAIL'][i].split(' ')[0].rstrip('m2'))
+                      + float(extracted_df['GENOVA SAIL'][i].split(' ')[0].rstrip('m2')),
+                      extracted_df['ENGINE'][i],
+                      int(extracted_df['WATER CAPACITY(lt)'][i].rstrip('l ')),
+                      int(extracted_df['FUEL CAPACITY(lt)'][i].rstrip('l ')),
+                      extracted_df['LOCATION'][i],
+                      extracted_df['yacht URL'][i],
+                      ]
+        transformed_df.loc[i] = row_to_add
 
-    return transformedDF
+    return transformed_df
