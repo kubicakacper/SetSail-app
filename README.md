@@ -1,7 +1,6 @@
 # SetSail_app
 
-Since November 2021 I am learning to become a Data Engineer.
-This is going to be the first project to my portfolio.
+I wanted to learn some Data Engineering stuff.
 
 SetSail is an application responding to a real need of creating a live repository of yachts' charter offers.
 Namely, there are thousands of companies offering their yachts for rent. Each of them having a website with yachts' description, specs and pricelists.
